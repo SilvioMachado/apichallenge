@@ -1,9 +1,10 @@
 import React from "react";
-import { View, Image, Text, StyleSheet } from "react-native";
+import { View, Image, Text, StyleSheet, TouchableOpacity } from "react-native";
 import Product from "../domain/product";
 
 interface ProductThumbProps {
     product: Product;
+    onPress: () => void;
 }
 
 const styles = StyleSheet.create({
@@ -24,18 +25,20 @@ const styles = StyleSheet.create({
     }
 })
 
-const ProductThumb = ({ product }: ProductThumbProps) => {
-    return <View style={styles.container} >
-        <Image
-            style={styles.thumbnail}
-            src={product.thumbnail}
-            />
-        <View style={styles.description}>
-            <Text>{product.title}</Text>
-            <Text>Price: {product.price.toString()}</Text>
-            <Text>Rating: {product.rating.toString()}</Text>
+const ProductThumb = ({ product, onPress }: ProductThumbProps) => {
+    return <TouchableOpacity onPress={onPress}>
+        <View style={styles.container} >
+            <Image
+                style={styles.thumbnail}
+                src={product.thumbnail}
+                />
+            <View style={styles.description}>
+                <Text>{product.title}</Text>
+                <Text>Price: {product.price.toString()}</Text>
+                <Text>Rating: {product.rating.toString()}</Text>
+            </View>
         </View>
-    </View>
+    </TouchableOpacity>
 };
 
 export default ProductThumb;

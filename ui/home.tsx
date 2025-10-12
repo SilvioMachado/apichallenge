@@ -5,14 +5,16 @@ import { ProductRestRepository } from "../infra";
 import Product, { ProductService } from "../domain/product";
 import { SafeAreaProvider, SafeAreaView } from "react-native-safe-area-context";
 import Filter, { Category } from "./Filter";
+import { useNavigation } from "@react-navigation/native";
 
-const Home = () => {
+export const Home = () => {
     const [products, setProducts] = useState<Product[]>([]);
     const [categories, setCategories] = useState<Category[]>([]);
     const [currentPage, setCurrentPage] = useState<Number>(1);
     const [loading, setLoading] = useState<Boolean>(true);
     const [hasNextPage, setHasNextPage] = useState(true);
     const [hasPreviousPage, setHasPreviousPage] = useState(false);
+    const navigation = useNavigation();
 
     const serviceRef = useRef(
         new ProductService(new ProductRestRepository(), 3)
@@ -87,7 +89,10 @@ const Home = () => {
                 <ScrollView contentContainerStyle={{ paddingBottom: 100 }}>
                     {
                         products && products.map((value: Product) => (
-                                <ProductThumb product={value} />
+                                <ProductThumb
+                                    product={value} 
+                                    onPress={() => navigation.navigate("Details")}
+                                />
                             )
                         )
                     }
@@ -116,5 +121,3 @@ const styles = StyleSheet.create({
         width: "100%"
     },
 });
-
-export default Home;
