@@ -1,25 +1,7 @@
-import { ProductRepository } from "./client";
+import ProductRepository from "../repository/ProductRepository";
+import Product from "../entities/Product";
+import Category from "../entities/Category";
 
-interface Product {
-    id: number;
-    title: string;
-    description: string;
-    category: string;
-    price: number;
-    thumbnail: string;
-    rating: number;
-    images: Array<string>;
-    stock: number;
-};
-
-export interface Category {
-    slug: string;
-    name: string;
-}
-
-export default Product;
-
-        
 export class ProductService {
     currentPage: number;
     pageLimit: number;
@@ -29,7 +11,6 @@ export class ProductService {
     categories?: Array<Category>;
     sortBy?: string;
     sortOrder?: string;
-
 
     constructor(
         private repository: ProductRepository,

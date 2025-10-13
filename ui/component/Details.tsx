@@ -1,6 +1,6 @@
 import React, { useRef, useState } from 'react';
 import { Text, View, StyleSheet, Image, Button, Modal, FlatList, Dimensions, ViewToken, ScrollView } from "react-native";
-import Product from '../domain/product';
+import Product from '../../domain/entities/Product';
 import { SafeAreaView } from 'react-native-safe-area-context';
 
 interface DetailsPageProps {

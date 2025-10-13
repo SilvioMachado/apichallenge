@@ -1,11 +1,12 @@
 import React, { useEffect, useRef, useState } from "react";
 import { ScrollView, Text, ActivityIndicator, StyleSheet, View, Button } from "react-native";
-import ProductThumb from "./productThumb";
-import { ProductRestRepository } from "../infra";
-import Product, { ProductService } from "../domain/product";
+import ProductThumb from "../component/productThumb";
+import { ProductRestRepository } from "../../infrastructure/ProductRestRepository";
+import { ProductService } from "../../domain/services/ProductListService";
+import Product from "../../domain/entities/Product";
 import { SafeAreaProvider, SafeAreaView } from "react-native-safe-area-context";
-import Filter, { Category } from "./Filter";
-import { DetailsPage } from "./Details";
+import Filter, { Category } from "../component/Filter";
+import { DetailsPage } from "../component/Details";
 
 export const HomePage = () => {
     const [products, setProducts] = useState<Product[]>([]);

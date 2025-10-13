@@ -1,12 +1,5 @@
-import { ProductRepository, ProductResponse} from "../domain/client";
-import Product, { Category } from "../domain/product";
-
-export async function getFirstPage(): Promise<Product[]> {
-    const res = await fetch('https://dummyjson.com/products');
-    const json: ProductResponse = await res.json();
-
-    return json.products;
-}
+import ProductRepository, { ProductResponse } from "../domain/repository/ProductRepository";
+import Category from "../domain/entities/Category";
 
 export class ProductRestRepository implements ProductRepository {
     async getPage(
@@ -20,6 +13,8 @@ export class ProductRestRepository implements ProductRepository {
             url += `/category/${filter.slug}`;
         }
         url += `?limit=${limit}&skip=${skip}`;
+        // select only necessary elements to improve performance
+        url += "&select=id,title,description,category,price,thumbnail,rating,images,stock"
         console.log("Using URL ", url);
         const res = await fetch(url);
         const json: ProductResponse = await res.json();
