@@ -1,6 +1,8 @@
 import ProductRepository from "../repository/ProductRepository";
 import Product from "../entities/Product";
 import Category from "../entities/Category";
+import { SortOrder } from "../entities/SortOrder";
+import { SortBy } from "../entities/SortBy";
 
 export class ProductService {
     currentPage: number;
@@ -9,8 +11,8 @@ export class ProductService {
     filter: Category | null;
     totalProducts?: number;
     categories?: Array<Category>;
-    sortBy?: string;
-    sortOrder?: string;
+    sortBy: SortBy | null = null;
+    sortOrder: SortOrder = SortOrder.ASC;
 
     constructor(
         private repository: ProductRepository,
@@ -29,6 +31,14 @@ export class ProductService {
         this.filter = category;
     }
 
+    setSort(field: SortBy | null, order: SortOrder) {
+        this.currentPage = 0;
+        this.skip = 0;
+        this.totalProducts = undefined;
+        this.sortBy = field;
+        this.sortOrder = order;
+    }
+
     async getNextPage(): Promise<Product[]> {
         this.skip += this.pageLimit; // TODO this is skipping next page
         this.currentPage += 1;
@@ -37,6 +47,8 @@ export class ProductService {
             this.pageLimit,
             this.skip,
             this.filter,
+            this.sortBy,
+            this.sortOrder,
         );
         this.totalProducts = response.total;
 
@@ -51,6 +63,8 @@ export class ProductService {
             this.pageLimit,
             this.skip,
             this.filter,
+            this.sortBy,
+            this.sortOrder,
         );
         this.totalProducts = response.total;
 

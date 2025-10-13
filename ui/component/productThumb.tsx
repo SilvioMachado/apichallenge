@@ -1,6 +1,6 @@
 import React from "react";
 import { View, Image, Text, StyleSheet, TouchableOpacity } from "react-native";
-import Product from "../domain/services/ProductListService";
+import Product from "../../domain/entities/Product";
 
 interface ProductThumbProps {
     product: Product;
