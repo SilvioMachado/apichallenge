@@ -1,4 +1,4 @@
-import React, { useEffect, useRef, useState } from "react";
+import React, { useEffect, useMemo, useState } from "react";
 import { FlatList, ActivityIndicator, StyleSheet, View, Button, TouchableOpacity, Text } from "react-native";
 import ProductThumb from "../component/productThumb";
 import { ProductRestRepository } from "../../infrastructure/ProductRestRepository";
@@ -22,24 +22,24 @@ export const HomePage = () => {
     const [sortBy, setSortBy] = useState<SortBy | null>(SortBy.PRICE); // Default sort by price
     const [sortOrder, setSortOrder] = useState<SortOrder>(SortOrder.ASC); // Default ascending
 
-    const serviceRef = useRef(
-        new ProductService(new ProductRestRepository(), 10)
-    );
+    const productService = useMemo(
+        () => new ProductService(new ProductRestRepository(10))
+    , []);
 
     useEffect(() => {
         const fetchData = async () => {
             setLoading(true);
             try {
                 // Set initial sort parameters in the service before fetching
-                serviceRef.current.setSort(sortBy, sortOrder); // Assuming setSort exists and resets page
+                productService.setSort(sortBy, sortOrder); // Assuming setSort exists and resets page
                 const [productsResponse, categoriesResponse] = await Promise.all([
-                    serviceRef.current.getNextPage(),
-                    serviceRef.current.getCategories(),
+                    productService.getNextPage(),
+                    productService.getCategories(),
                 ]);
                 setProducts(productsResponse);
                 setCategories(categoriesResponse);
-                setHasNextPage(serviceRef.current.hasNext());
-                setHasPreviousPage(serviceRef.current.hasPrevious());
+                setHasNextPage(productService.hasNext());
+                setHasPreviousPage(productService.hasPrevious());
             } catch (error) {
                 console.error("Failed to fetch data:", error);
             }
@@ -51,10 +51,10 @@ export const HomePage = () => {
     const goToNextPage = async () => {
         setLoading(true);
         try {
-            const res = await serviceRef.current.getNextPage()
+            const res = await productService.getNextPage()
             setProducts(res);
-            setHasNextPage(serviceRef.current.hasNext())
-            setHasPreviousPage(serviceRef.current.hasPrevious())
+            setHasNextPage(productService.hasNext())
+            setHasPreviousPage(productService.hasPrevious())
         } catch {}
        setLoading(false);
     };
@@ -62,17 +62,17 @@ export const HomePage = () => {
     const goToPreviousPage = async () => {
         setLoading(true);
         try {
-            const res = await serviceRef.current.getPreviousPage()
+            const res = await productService.getPreviousPage()
             setProducts(res);
-            setHasNextPage(serviceRef.current.hasNext())
-            setHasPreviousPage(serviceRef.current.hasPrevious())
+            setHasNextPage(productService.hasNext())
+            setHasPreviousPage(productService.hasPrevious())
         } catch {}
        setLoading(false);
     }
 
     const handleFilterSelect = (category: Category | null) => {
         console.log("Selected category slug:", category);
-        serviceRef.current.setFilter(category);
+        productService.setFilter(category);
         // fetchProducts();
         goToNextPage();
     };
@@ -82,15 +82,15 @@ export const HomePage = () => {
         setSortOrder(order);
         // Assuming ProductService has a setSort method that updates internal sort state
         // and resets the current page to 1.
-        serviceRef.current.setSort(field, order);
+        productService.setSort(field, order);
         setLoading(true);
         try {
             // After setting sort, fetch the first page with the new sort parameters.
             // `getNextPage()` should now fetch the first page based on the service's internal state.
-            const res = await serviceRef.current.getNextPage();
+            const res = await productService.getNextPage();
             setProducts(res);
-            setHasNextPage(serviceRef.current.hasNext());
-            setHasPreviousPage(serviceRef.current.hasPrevious());
+            setHasNextPage(productService.hasNext());
+            setHasPreviousPage(productService.hasPrevious());
         } catch (error) {
             console.error("Failed to fetch products with new sort:", error);
         }
@@ -111,7 +111,7 @@ export const HomePage = () => {
                     <FlatList
                         data={products}
                         renderItem={({ item }) => (
-                            <ProductThumb product={item} onPress={() => {setSelectedProduct(item); console.log("Item clicked ", item)}} />
+                            <ProductThumb product={item} onPress={() => {setSelectedProduct(item);}} />
                         )}
                         keyExtractor={(item) => item.id.toString()}
                     />

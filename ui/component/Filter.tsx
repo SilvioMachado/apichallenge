@@ -54,7 +54,7 @@ const Filter = ({ categories, onCategorySelect }: FilterProps) => {
                             data={categories}
                             keyExtractor={(item) => item.slug}
                             renderItem={({ item }) => (
-                                <TouchableOpacity onPress={() => handleCategoryPress(item)}>
+                                <TouchableOpacity onPress={() => handleCategoryPress(item)} style={styles.categoryItemContainer}>
                                     <Text style={styles.categoryItem}>{item.name}</Text>
                                 </TouchableOpacity>
                             )}
@@ -71,6 +71,7 @@ const styles = StyleSheet.create({
     container: {
         flexDirection: "row",
         alignItems: "center",
+        flexShrink: 1, // Allow this container to shrink if space is limited
         padding: 10,
     },
     selectedContainer: {
@@ -80,10 +81,12 @@ const styles = StyleSheet.create({
         padding: 8,
         backgroundColor: '#e0e0e0',
         borderRadius: 15,
+        flexShrink: 1, // Allow the selected category pill to shrink
     },
     selectedCategoryText: {
         fontSize: 16,
         fontWeight: "bold",
+        flexShrink: 1, // Allow the text itself to shrink
     },
     clearButton: {
         marginLeft: 8,
@@ -110,6 +113,9 @@ const styles = StyleSheet.create({
     modalTitle: {
         fontSize: 20,
         marginBottom: 15,
+    },
+    categoryItemContainer: {
+        width: '100%',
     },
     categoryItem: {
         fontSize: 18,

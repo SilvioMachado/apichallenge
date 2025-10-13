@@ -6,19 +6,16 @@ import { SortOrder } from "../entities/SortOrder";
 export interface ProductResponse {
     products: Product[];
     total: number;
+    skip: number;
+    limit: number;
 }
 
-interface ProductRepository {
-    getPage(
-        page: Number, 
-        limit: Number, 
-        skip: number,
-        filter?: Category | null,
-        sortBy?: SortBy | null,
-        sortOrder?: SortOrder | null,
-    ): Promise<ProductResponse>;
-
+export default interface ProductRepository {
+    setFilter(category: Category | null): void;
+    setSort(field: SortBy | null, order: SortOrder): void;
+    getNextPage(): Promise<Product[]>;
+    getPreviousPage(): Promise<Product[]>;
+    hasNext(): boolean;
+    hasPrevious(): boolean;
     getCategories(): Promise<Category[]>;
 }
-
-export default ProductRepository;
