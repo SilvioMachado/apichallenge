@@ -20,23 +20,25 @@ export class ProductService {
     ) {
         this.currentPage = 0;
         this.pageLimit = pageLimit;
-        this.skip = 0;
+        this.skip = 0 - pageLimit;
         this.filter = null;
     }
 
-    setFilter(category: Category | null) {
-        this.currentPage = 1;
-        this.skip = 0;
+    private resetState() {
+        this.currentPage = 0;
+        this.skip = 0 - this.pageLimit;
         this.totalProducts = undefined;
+    }
+
+    setFilter(category: Category | null) {
         this.filter = category;
+        this.resetState();
     }
 
     setSort(field: SortBy | null, order: SortOrder) {
-        this.currentPage = 0;
-        this.skip = 0;
-        this.totalProducts = undefined;
         this.sortBy = field;
         this.sortOrder = order;
+        this.resetState();
     }
 
     async getNextPage(): Promise<Product[]> {
