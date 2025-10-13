@@ -1,13 +1,15 @@
 import { ProductRepository } from "./client";
 
 interface Product {
-    id: Number;
-    title: String;
-    category: String;
-    price: Number;
+    id: number;
+    title: string;
+    description: string;
+    category: string;
+    price: number;
     thumbnail: string;
-    rating: Number;
-    stock: Number;
+    rating: number;
+    images: Array<string>;
+    stock: number;
 };
 
 export interface Category {
