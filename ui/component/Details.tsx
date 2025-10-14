@@ -6,9 +6,10 @@ import { SafeAreaView } from 'react-native-safe-area-context';
 interface DetailsPageProps {
     product: Product | null;
     onClose: () => void;
+    setReminder: () => void;
 }
 
-export const DetailsPage = ({ product, onClose }: DetailsPageProps) => {
+export const DetailsPage = ({ product, onClose, setReminder }: DetailsPageProps) => {
     const [activeIndex, setActiveIndex] = useState(0);
 
     const onViewableItemsChanged = useRef(({ viewableItems }: { viewableItems: Array<ViewToken> }) => {
@@ -74,6 +75,7 @@ export const DetailsPage = ({ product, onClose }: DetailsPageProps) => {
                             </View>
                         </ScrollView>
                         <View style={styles.footer}>
+                            <Button title="Remind me" onPress={setReminder} />
                                 <Button title="Close" onPress={onClose} />
                             </View>
                     </>

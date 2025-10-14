@@ -12,6 +12,9 @@ import { SortBy } from "../../domain/entities/SortBy";
 import { useDeepLink, OpenProductIntent } from "../../infrastructure/hook/useDeepLink";
 import ProductList from "../component/ProductList";
 
+import { NativeModules } from 'react-native';
+
+
 export const HomePage = () => {
     const [products, setProducts] = useState<Product[]>([]);
     const [categories, setCategories] = useState<Category[]>([]);
@@ -24,9 +27,23 @@ export const HomePage = () => {
 
     const { intent, clearIntent } = useDeepLink();
 
+    const { CalendarModule } = NativeModules;
+
     const productService = useMemo(
         () => new ProductService(new ProductRestRepository(10))
     , []);
+
+    const setReminder = (product: Product | null) => {
+        if (!product) {
+            return;
+        }
+
+        CalendarModule.createEvent(
+            `Buy ${product.title}`,
+            `Buy now: http://apichallenge.com/product/${product.id}`,
+            new Date(2025, 10, 15, 10, 30).getTime(),
+        )
+    };
 
     useEffect(() => {
         if (intent instanceof OpenProductIntent) {
@@ -117,7 +134,11 @@ export const HomePage = () => {
                     hasNextPage={hasNextPage}
                     hasPreviousPage={hasPreviousPage}
                 />
-                <DetailsPage product={selectedProduct} onClose={() => setSelectedProduct(null)} />
+                <DetailsPage 
+                    product={selectedProduct} 
+                    onClose={() => setSelectedProduct(null)}
+                    setReminder={() => setReminder(selectedProduct)}
+                 />
             </SafeAreaView>
         </SafeAreaProvider>
     )
