@@ -1,6 +1,5 @@
 import React, { useEffect, useMemo, useState } from "react";
-import { FlatList, ActivityIndicator, StyleSheet, View, Button, TouchableOpacity, Text, Linking } from "react-native";
-import ProductThumb from "../component/productThumb";
+import { StyleSheet, View } from "react-native";
 import { ProductRestRepository } from "../../infrastructure/repository/ProductRestRepository";
 import { ProductService } from "../../domain/services/ProductListService";
 import Product from "../../domain/entities/Product";
@@ -11,12 +10,12 @@ import { DetailsPage } from "../component/Details";
 import { SortOrder } from "../../domain/entities/SortOrder";
 import { SortBy } from "../../domain/entities/SortBy";
 import { useDeepLink, OpenProductIntent } from "../../infrastructure/hook/useDeepLink";
+import ProductList from "../component/ProductList";
 
 export const HomePage = () => {
     const [products, setProducts] = useState<Product[]>([]);
     const [categories, setCategories] = useState<Category[]>([]);
-    const [currentPage, setCurrentPage] = useState<Number>(1);
-    const [loading, setLoading] = useState<Boolean>(true);
+    const [loading, setLoading] = useState<boolean>(true);
     const [selectedProduct, setSelectedProduct] = useState<Product | null>(null);
     const [hasNextPage, setHasNextPage] = useState(true);
     const [hasPreviousPage, setHasPreviousPage] = useState(false);
@@ -124,35 +123,15 @@ export const HomePage = () => {
                         <SortButton label="Rating" field={SortBy.RATING} currentSortField={sortBy} currentSortOrder={sortOrder} onPress={handleSortChange} />
                     </View>
                 </View>
-                <View style={styles.listContainer}>
-                    <FlatList
-                        data={products}
-                        renderItem={({ item }) => (
-                            <ProductThumb product={item} onPress={() => {setSelectedProduct(item);}} />
-                        )}
-                        keyExtractor={(item) => item.id.toString()}
-                    />
-                    {
-                        loading && <View style={styles.loadingOverlay}>
-                            <ActivityIndicator size="large" color="#0000ff" />
-                            </View>
-                    }
-                </View>
-                <View style={styles.buttonContainer}>
-                    <TouchableOpacity
-                        onPress={goToPreviousPage}
-                        disabled={!hasPreviousPage}
-                        style={[styles.button, !hasPreviousPage && styles.buttonDisabled]}
-                    >
-                        <Text style={styles.buttonText}>Previous</Text>
-                    </TouchableOpacity>
-                    <TouchableOpacity
-                        onPress={goToNextPage}
-                        disabled={!hasNextPage}
-                        style={[styles.button, !hasNextPage && styles.buttonDisabled]}>
-                        <Text style={styles.buttonText}>Next</Text>
-                    </TouchableOpacity>
-                </View>
+                <ProductList
+                    products={products}
+                    onProductPress={setSelectedProduct}
+                    loading={loading}
+                    goToNextPage={goToNextPage}
+                    goToPreviousPage={goToPreviousPage}
+                    hasNextPage={hasNextPage}
+                    hasPreviousPage={hasPreviousPage}
+                />
                 <DetailsPage product={selectedProduct} onClose={() => setSelectedProduct(null)} />
             </SafeAreaView>
         </SafeAreaProvider>
@@ -161,9 +140,6 @@ export const HomePage = () => {
 
 const styles = StyleSheet.create({
     container: {
-        flex: 1,
-    },
-    listContainer: {
         flex: 1,
     },
     controlsContainer: {
@@ -177,33 +153,5 @@ const styles = StyleSheet.create({
     sortButtonContainer: { // This will now just group the sort buttons
         flexDirection: 'row',
         justifyContent: 'center',
-    },
-    loadingOverlay: {
-        ...StyleSheet.absoluteFillObject, // Covers the entire parent (listContainer)
-        justifyContent: 'center',
-        alignItems: 'center',
-        backgroundColor: 'rgba(255, 255, 255, 0.8)', // Semi-transparent white overlay
-        zIndex: 10, // Ensure it's above other content
-    },
-    buttonContainer: {
-        flexDirection: 'row',
-        justifyContent: 'space-around',
-        paddingVertical: 10,
-        borderTopWidth: 1,
-        borderTopColor: '#eee',
-    },
-    button: {
-        backgroundColor: '#007AFF',
-        paddingHorizontal: 20,
-        paddingVertical: 10,
-        borderRadius: 5,
-    },
-    buttonDisabled: {
-        backgroundColor: '#d3d3d3',
-    },
-    buttonText: {
-        color: 'white',
-        fontWeight: 'bold',
-        fontSize: 16,
     },
 });

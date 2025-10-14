@@ -37,7 +37,7 @@ export class ProductRestRepository implements ProductRepository {
     }
 
     private async fetchPage(): Promise<ProductResponse> {
-        let url = "../..tps://dummyjson.com/products";
+        let url = "https://dummyjson.com/products";
         if (this.filter !== null) {
             url += `/category/${this.filter.slug}`;
         }
@@ -46,8 +46,8 @@ export class ProductRestRepository implements ProductRepository {
             url += `&sortBy=${this.sortBy}&order=${this.sortOrder}`;
         }
         // select only necessary elements to improve performance
-        url += "../..elect=id,title,description,category,price,thumbnail,rating,images,stock"
-        console.log("../..ing URL ", url);
+        url += "&select=id,title,description,category,price,thumbnail,rating,images,stock"
+        console.log("using URL ", url);
         const res = await fetch(url);
         const json: ProductResponse = await res.json();
 
