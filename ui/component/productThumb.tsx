@@ -9,16 +9,16 @@ interface ProductThumbProps {
 }
 
 const ProductThumb = ({ product, onPress }: ProductThumbProps) => {
-    return <TouchableOpacity onPress={onPress}>
-        <View style={styles.container} >
+    return <TouchableOpacity onPress={onPress} activeOpacity={0.7}>
+        <View style={styles.container}>
             <Image
                 style={styles.thumbnail}
                 src={product.thumbnail}
-                />
-            <View>
-                <Text>{product.title}</Text>
-                <Text>Price: {product.price.toString()}</Text>
-                <Text>Rating: {product.rating.toString()}</Text>
+            />
+            <View style={styles.infoContainer}>
+                <Text style={styles.title} numberOfLines={2}>{product.title}</Text>
+                <Text style={styles.rating}>Rating: {product.rating.toString()}</Text>
+                <Text style={styles.price}>Price: ${product.price.toString()}</Text>
             </View>
         </View>
     </TouchableOpacity>
