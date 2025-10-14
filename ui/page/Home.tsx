@@ -1,6 +1,5 @@
 import React, { useEffect, useMemo, useState } from "react";
 import { View } from "react-native";
-import { ProductRestRepository } from "../../infrastructure/repository/ProductRestRepository";
 import { ProductService } from "../../domain/services/ProductListService";
 import Product from "../../domain/entities/Product";
 import { SafeAreaProvider, SafeAreaView } from "react-native-safe-area-context";
@@ -14,6 +13,7 @@ import ProductList from "../component/ProductList";
 
 import { NativeModules } from 'react-native';
 import { styles } from "./Home.styles";
+import { ProductRestRepository } from "../../infrastructure/repository/ProductRestRepository";
 
 
 export const HomePage = () => {
@@ -23,7 +23,8 @@ export const HomePage = () => {
     const [selectedProduct, setSelectedProduct] = useState<Product | null>(null);
     const [hasNextPage, setHasNextPage] = useState(true);
     const [hasPreviousPage, setHasPreviousPage] = useState(false);
-    const [sortBy, setSortBy] = useState<SortBy | null>(SortBy.PRICE); // Default sort by price
+    const [sortBy, setSortBy] = useState<SortBy | null>(SortBy.PRICE);
+    const [productDisplayRange, setProductDisplayRange] = useState<string>("");
     const [sortOrder, setSortOrder] = useState<SortOrder>(SortOrder.ASC); // Default ascending
 
     const { intent, clearIntent } = useDeepLink();
@@ -74,6 +75,8 @@ export const HomePage = () => {
                 setCategories(categoriesResponse);
                 setHasNextPage(productService.hasNext());
                 setHasPreviousPage(productService.hasPrevious());
+
+                setProductDisplayRange(productService.getProductDisplayRange());
             } catch (error) {
                 console.error("Failed to fetch data:", error);
             }
@@ -89,6 +92,8 @@ export const HomePage = () => {
             setProducts(res);
             setHasNextPage(productService.hasNext());
             setHasPreviousPage(productService.hasPrevious());
+
+            setProductDisplayRange(productService.getProductDisplayRange());
         } catch (error) {
             console.error("Failed to fetch products:", error);
         }
@@ -134,6 +139,7 @@ export const HomePage = () => {
                     goToPreviousPage={goToPreviousPage}
                     hasNextPage={hasNextPage}
                     hasPreviousPage={hasPreviousPage}
+                    productDisplayRange={productDisplayRange}
                 />
                 <DetailsPage 
                     product={selectedProduct} 

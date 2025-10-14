@@ -40,4 +40,20 @@ export class ProductService {
     async getCategories(): Promise<Category[]> {
         return this.repository.getCategories();
     }
+
+    getCurrentPage(): number {
+        return this.repository.getCurrentPage();
+    }
+
+    getTotalProducts(): number | undefined {
+        return this.repository.getTotalProducts();
+    }
+
+    getPageLimit(): number {
+        return this.repository.getPageLimit();
+    }
+
+    getProductDisplayRange(): string {
+        return this.repository.getProductDisplayRange();
+    }
 }

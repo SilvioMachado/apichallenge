@@ -12,6 +12,7 @@ export const styles = StyleSheet.create({
     buttonContainer: {
         flexDirection: 'row',
         justifyContent: 'space-around',
+        alignItems: 'center',
         paddingVertical: 10,
         borderTopWidth: 1,
         borderTopColor: '#eee',
@@ -19,4 +20,9 @@ export const styles = StyleSheet.create({
     button: { backgroundColor: '#007AFF', paddingHorizontal: 20, paddingVertical: 10, borderRadius: 5 },
     buttonDisabled: { backgroundColor: '#d3d3d3' },
     buttonText: { color: 'white', fontWeight: 'bold', fontSize: 16 },
+    rangeText: {
+        fontSize: 16,
+        fontWeight: '600',
+        color: '#333',
+    },
 });

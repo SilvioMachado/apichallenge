@@ -99,6 +99,28 @@ export class ProductRestRepository implements ProductRepository {
         return this.currentPage > 1;
     }
 
+    public getCurrentPage(): number {
+        return this.currentPage;
+    }
+
+    public getTotalProducts(): number | undefined {
+        return this.totalProducts;
+    }
+
+    public getPageLimit(): number {
+        return this.pageLimit;
+    }
+
+    public getProductDisplayRange(): string {
+        if (this.totalProducts === undefined || this.currentPage === 0) {
+            return "";
+        }
+
+        const start = this.skip + 1;
+        const end = Math.min(this.skip + this.pageLimit, this.totalProducts);
+        return `${start} - ${end}`;
+    }
+
     async getCategories(): Promise<Category[]> {
         if (this.categories === undefined) {
             const res = await fetch("https://dummyjson.com/products/categories");

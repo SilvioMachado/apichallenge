@@ -19,4 +19,8 @@ export default interface ProductRepository {
     hasNext(): boolean;
     hasPrevious(): boolean;
     getCategories(): Promise<Category[]>;
+    getCurrentPage(): number;
+    getTotalProducts(): number | undefined;
+    getPageLimit(): number;
+    getProductDisplayRange(): string;
 }

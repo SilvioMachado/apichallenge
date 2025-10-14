@@ -18,6 +18,7 @@ interface ProductListProps {
     goToPreviousPage: () => void;
     hasNextPage: boolean;
     hasPreviousPage: boolean;
+    productDisplayRange: string;
 }
 
 const ProductList = ({
@@ -28,6 +29,7 @@ const ProductList = ({
     goToPreviousPage,
     hasNextPage,
     hasPreviousPage,
+    productDisplayRange,
 }: ProductListProps) => {
     return (
         <>
@@ -53,6 +55,7 @@ const ProductList = ({
                 >
                     <Text style={styles.buttonText}>Previous</Text>
                 </TouchableOpacity>
+                <Text style={styles.rangeText}>{productDisplayRange}</Text>
                 <TouchableOpacity
                     onPress={goToNextPage}
                     disabled={!hasNextPage}
