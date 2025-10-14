@@ -19,7 +19,7 @@ interface ProductDetailsPageProps {
   setReminder: () => void;
 }
 
-export const ProductDetailsPage = ({
+export const ProductDetails = ({
   product,
   onClose,
   setReminder,

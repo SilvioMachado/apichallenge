@@ -5,7 +5,7 @@ import Product from '../../domain/entities/Product';
 import { SafeAreaProvider, SafeAreaView } from 'react-native-safe-area-context';
 import Filter, { Category } from '../component/Filter';
 import SortButton from '../component/SortButton';
-import { ProductDetailsPage } from '../component/ProductDetails';
+import { ProductDetails } from '../component/ProductDetails';
 import { SortOrder } from '../../domain/entities/SortOrder';
 import { SortBy } from '../../domain/entities/SortBy';
 import {
@@ -14,9 +14,10 @@ import {
 } from '../../infrastructure/hook/useDeepLink';
 import ProductList from '../component/ProductList';
 
-import { NativeModules } from 'react-native';
 import { styles } from './Home.styles';
 import { ProductRestRepository } from '../../infrastructure/repository/ProductRestRepository';
+import { NotificationService } from '../../domain/services/NotificationService';
+import { AndroidCalendarProvider } from '../../infrastructure/calendar/AndroidCalendarProvider';
 
 export const HomePage = () => {
   const [selectedProduct, setSelectedProduct] = useState<Product | null>(null);
@@ -26,23 +27,23 @@ export const HomePage = () => {
 
   const { intent, clearIntent } = useDeepLink();
 
-  const { CalendarModule } = NativeModules;
 
   const productService = useMemo(
     () => new ProductService(new ProductRestRepository(10)),
     [],
   );
 
+  const notificationService = useMemo(
+    () => new NotificationService(new AndroidCalendarProvider()),
+    [],
+  )
+
   const setReminder = (product: Product | null) => {
     if (!product) {
       return;
     }
 
-    CalendarModule.createEvent(
-      `Buy ${product.title}`,
-      `Buy now: ${product.getBuyURL()}`,
-      new Date(2025, 10, 15, 10, 30).getTime(),
-    );
+    notificationService.createBuyReminder(new Date(2025, 14, 10), product);
   };
 
   useEffect(() => {
@@ -111,7 +112,7 @@ export const HomePage = () => {
         />
 
         {/* Selected Product Details */}
-        <ProductDetailsPage
+        <ProductDetails
           product={selectedProduct}
           onClose={() => setSelectedProduct(null)}
           setReminder={() => setReminder(selectedProduct)}
