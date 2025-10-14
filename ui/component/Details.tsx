@@ -77,6 +77,7 @@ export const DetailsPage = ({ product, onClose, setReminder }: DetailsPageProps)
                         </ScrollView>
                         <View style={styles.footer}>
                             <Button title="Remind me" onPress={setReminder}/>
+                            <View style={styles.buttonSeparator} />
                             <Button title="Close" onPress={onClose} />
                         </View>
                     </>

@@ -44,6 +44,10 @@ export const styles = StyleSheet.create({
         padding: 16,
         paddingTop: 0,
     },
+    buttonSeparator: {
+        minHeight: 10,
+        maxHeight: 15,
+    },
     stockAvailable: {
         fontSize: 16,
         color: 'green',
