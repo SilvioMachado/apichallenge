@@ -64,53 +64,38 @@ export const HomePage = () => {
         fetchData();
     }, []);
 
-    const goToNextPage = async () => {
+    const fetchProducts = async (fetcher: () => Promise<Product[]>) => {
         setLoading(true);
         try {
-            const res = await productService.getNextPage()
+            const res = await fetcher();
             setProducts(res);
-            setHasNextPage(productService.hasNext())
-            setHasPreviousPage(productService.hasPrevious())
-        } catch {}
-       setLoading(false);
+            setHasNextPage(productService.hasNext());
+            setHasPreviousPage(productService.hasPrevious());
+        } catch (error) {
+            console.error("Failed to fetch products:", error);
+        }
+        setLoading(false);
     };
 
-    const goToPreviousPage = async () => {
-        setLoading(true);
-        try {
-            const res = await productService.getPreviousPage()
-            setProducts(res);
-            setHasNextPage(productService.hasNext())
-            setHasPreviousPage(productService.hasPrevious())
-        } catch {}
-       setLoading(false);
+    const goToNextPage = () => {
+        fetchProducts(() => productService.getNextPage());
+    };
+
+    const goToPreviousPage = () => {
+        fetchProducts(() => productService.getPreviousPage());
     }
 
     const handleFilterSelect = (category: Category | null) => {
         console.log("Selected category slug:", category);
         productService.setFilter(category);
-        // fetchProducts();
         goToNextPage();
     };
 
-    const handleSortChange = async (field: SortBy, order: SortOrder) => {
+    const handleSortChange = (field: SortBy, order: SortOrder) => {
         setSortBy(field);
         setSortOrder(order);
-        // Assuming ProductService has a setSort method that updates internal sort state
-        // and resets the current page to 1.
         productService.setSort(field, order);
-        setLoading(true);
-        try {
-            // After setting sort, fetch the first page with the new sort parameters.
-            // `getNextPage()` should now fetch the first page based on the service's internal state.
-            const res = await productService.getNextPage();
-            setProducts(res);
-            setHasNextPage(productService.hasNext());
-            setHasPreviousPage(productService.hasPrevious());
-        } catch (error) {
-            console.error("Failed to fetch products with new sort:", error);
-        }
-        setLoading(false);
+        goToNextPage();
     };
 
     return (
