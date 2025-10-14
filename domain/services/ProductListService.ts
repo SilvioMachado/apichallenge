@@ -4,6 +4,7 @@ import Category from "../entities/Category";
 import { SortOrder } from "../entities/SortOrder";
 import { SortBy } from "../entities/SortBy";
 import { FailedToFetchError } from "../exception/FailedToFetchError";
+import { ProductListPage } from "../entities/ProductListPage";
 
 export class ProductService {
     constructor(
@@ -26,28 +27,32 @@ export class ProductService {
         }
     }
 
-    async getNextPage(): Promise<Product[]> {
+    async getNextPage(): Promise<ProductListPage> {
         try {
-            return await this.repository.getNextPage();
+            const products = await this.repository.getNextPage();
+            return new ProductListPage(
+                products,
+                this.repository.hasNext(),
+                this.repository.hasPrevious(),
+                this.repository.getProductDisplayRange()
+            );
         } catch (e) {
             throw new FailedToFetchError("Failed to fetch next page of products.");
         }
     }
 
-    async getPreviousPage(): Promise<Product[]> {
+    async getPreviousPage(): Promise<ProductListPage> {
         try {
-            return await this.repository.getPreviousPage();
+            const products = await this.repository.getPreviousPage();
+            return new ProductListPage(
+                products,
+                this.repository.hasNext(),
+                this.repository.hasPrevious(),
+                this.repository.getProductDisplayRange()
+            );
         } catch (e) {
             throw new FailedToFetchError("Failed to fetch previous page of products.");
         }
-    }
-
-    hasNext(): boolean {
-        return this.repository.hasNext();
-    }
-
-    hasPrevious(): boolean {
-        return this.repository.hasPrevious();
     }
 
     async getCategories(): Promise<Category[]> {
@@ -68,9 +73,5 @@ export class ProductService {
 
     getPageLimit(): number {
         return this.repository.getPageLimit();
-    }
-
-    getProductDisplayRange(): string {
-        return this.repository.getProductDisplayRange();
     }
 }

@@ -14,6 +14,7 @@ import { FailedToFetchError } from '../../domain/exception/FailedToFetchError';
 import { SortBy } from '../../domain/entities/SortBy';
 import { SortOrder } from '../../domain/entities/SortOrder';
 import { Category } from './Filter';
+import { ProductListPage } from '../../domain/entities/ProductListPage';
 
 interface ProductListProps {
     productService: ProductService;
@@ -28,22 +29,16 @@ const ProductList = ({
     filter,
     sort,
 }: ProductListProps) => {
-    const [products, setProducts] = useState<Product[]>([]);
+    const [productPage, setProductPage] = useState<ProductListPage | null>(null);
     const [loading, setLoading] = useState<boolean>(true);
     const [error, setError] = useState<string | null>(null);
-    const [hasNextPage, setHasNextPage] = useState(true);
-    const [hasPreviousPage, setHasPreviousPage] = useState(false);
-    const [productDisplayRange, setProductDisplayRange] = useState<string>("");
 
-    const fetchProducts = useCallback(async (fetcher: () => Promise<Product[]>) => {
+    const fetchProducts = useCallback(async (fetcher: () => Promise<ProductListPage>) => {
         setLoading(true);
         setError(null);
         try {
             const res = await fetcher();
-            setProducts(res);
-            setHasNextPage(productService.hasNext());
-            setHasPreviousPage(productService.hasPrevious());
-            setProductDisplayRange(productService.getProductDisplayRange());
+            setProductPage(res);
         } catch (error) {
             if (error instanceof FailedToFetchError) {
                 setError(error.message);
@@ -84,7 +79,7 @@ const ProductList = ({
                     </View>
                 ) : (
                 <FlatList
-                    data={products}
+                    data={productPage?.products ?? []}
                     renderItem={({ item }) => (
                         <ProductThumb product={item} onPress={() => onProductPress(item)} />
                     )}
@@ -100,16 +95,16 @@ const ProductList = ({
             {!error && <View style={styles.buttonContainer}>
                 <TouchableOpacity
                     onPress={goToPreviousPage}
-                    disabled={!hasPreviousPage}
-                    style={[styles.button, !hasPreviousPage && styles.buttonDisabled]}
+                    disabled={!productPage?.hasPreviousPage}
+                    style={[styles.button, !productPage?.hasPreviousPage && styles.buttonDisabled]}
                 >
                     <Text style={styles.buttonText}>Previous</Text>
                 </TouchableOpacity>
-                <Text style={styles.rangeText}>{productDisplayRange}</Text>
+                <Text style={styles.rangeText}>{productPage?.displayRange}</Text>
                 <TouchableOpacity
                     onPress={goToNextPage}
-                    disabled={!hasNextPage}
-                    style={[styles.button, !hasNextPage && styles.buttonDisabled]}>
+                    disabled={!productPage?.hasNextPage}
+                    style={[styles.button, !productPage?.hasNextPage && styles.buttonDisabled]}>
                     <Text style={styles.buttonText}>Next</Text>
                 </TouchableOpacity>
             </View>}
