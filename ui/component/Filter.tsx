@@ -32,7 +32,7 @@ const Filter = ({ categories, onCategorySelect }: FilterProps) => {
             <Button title="Filter" onPress={() => setModalVisible(true)} />
             {selectedCategory && (
                 <View style={styles.selectedContainer}>
-                    <Text style={styles.selectedCategoryText}>
+                    <Text style={styles.selectedCategoryText} numberOfLines={1} ellipsizeMode="tail">
                         {selectedCategory.name}
                     </Text>
                     <TouchableOpacity onPress={handleClearFilter} style={styles.clearButton}>

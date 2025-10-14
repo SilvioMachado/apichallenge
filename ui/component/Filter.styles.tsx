@@ -17,7 +17,7 @@ export const styles = StyleSheet.create({
         flexShrink: 1, // Allow the selected category pill to shrink
     },
     selectedCategoryText: {
-        fontSize: 16,
+        fontSize: 12,
         fontWeight: "bold",
         flexShrink: 1, // Allow the text itself to shrink
     },
