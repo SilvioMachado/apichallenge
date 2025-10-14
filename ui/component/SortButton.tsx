@@ -1,7 +1,8 @@
 import React from 'react';
-import { TouchableOpacity, Text, StyleSheet, View } from 'react-native';
+import { TouchableOpacity, Text } from 'react-native';
 import { SortOrder } from '../../domain/entities/SortOrder';
 import { SortBy } from '../../domain/entities/SortBy';
+import { styles } from './SortButton.styles';
 
 interface SortButtonProps {
     label: string;
@@ -39,31 +40,5 @@ const SortButton = ({ label, field, currentSortField, currentSortOrder, onPress 
         </TouchableOpacity>
     );
 };
-
-const styles = StyleSheet.create({
-    button: {
-        flexDirection: 'row',
-        alignItems: 'center',
-        paddingVertical: 8,
-        paddingHorizontal: 12,
-        borderRadius: 20,
-        backgroundColor: '#f0f0f0',
-        marginHorizontal: 5,
-    },
-    activeButton: {
-        backgroundColor: '#007AFF',
-    },
-    buttonText: {
-        fontSize: 14,
-        color: 'black',
-    },
-    activeButtonText: {
-        color: 'white',
-    },
-    arrow: {
-        marginLeft: 4,
-        fontSize: 14,
-    },
-});
 
 export default SortButton;

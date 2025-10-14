@@ -1,7 +1,8 @@
 import React, { useRef, useState } from 'react';
-import { Text, View, StyleSheet, Image, Button, Modal, FlatList, Dimensions, ViewToken, ScrollView } from "react-native";
+import { Text, View, Image, Button, Modal, FlatList, ViewToken, ScrollView } from "react-native";
 import Product from '../../domain/entities/Product';
 import { SafeAreaView } from 'react-native-safe-area-context';
+import { styles } from './Details.styles';
 
 interface DetailsPageProps {
     product: Product | null;
@@ -75,86 +76,12 @@ export const DetailsPage = ({ product, onClose, setReminder }: DetailsPageProps)
                             </View>
                         </ScrollView>
                         <View style={styles.footer}>
-                            <Button title="Remind me" onPress={setReminder} />
-                                <Button title="Close" onPress={onClose} />
-                            </View>
+                            <Button title="Remind me" onPress={setReminder}/>
+                            <Button title="Close" onPress={onClose} />
+                        </View>
                     </>
                 )}
             </SafeAreaView>
         </Modal>
     );
 };
-
-const { height: windowHeight } = Dimensions.get('window');
-
-const styles = StyleSheet.create({
-    container: {
-        flex: 1,
-    },
-    slide: {
-        width: Dimensions.get('window').width,
-        height: windowHeight * 0.5,
-    },
-    imageList: {
-        height: 100,
-        marginBottom: 16,
-    },
-    scrollContainer: {
-        flex: 1,
-    },
-    contentContainer: {
-        padding: 16,
-        paddingTop: 0,
-    },
-    image: {
-        width: "100%",
-        height: "100%",
-        resizeMode: 'contain',
-    },
-    title: {
-        fontSize: 24,
-        fontWeight: 'bold',
-        marginBottom: 4,
-    },
-    description: {
-        fontSize: 16,
-        marginBottom: 8,
-    },
-    price: {
-        fontSize: 20,
-        fontWeight: 'bold',
-        marginBottom: 4,
-    },
-    footer: {
-        padding: 16,
-        paddingTop: 0,
-    },
-    stockAvailable: {
-        fontSize: 16,
-        color: 'green',
-        marginTop: 4,
-    },
-    stockUnavailable: {
-        fontSize: 16,
-        color: 'red',
-        marginTop: 4,
-    },
-    paginationContainer: {
-        flexDirection: 'row',
-        justifyContent: 'center',
-        alignItems: 'center',
-        paddingVertical: 8,
-    },
-    paginationDot: {
-        width: 8,
-        height: 8,
-        borderRadius: 4,
-        marginHorizontal: 4,
-    },
-    paginationDotActive: {
-        backgroundColor: 'black',
-    },
-    paginationDotInactive: {
-        backgroundColor: 'gray',
-    },
-});

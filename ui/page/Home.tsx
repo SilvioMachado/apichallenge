@@ -1,5 +1,5 @@
 import React, { useEffect, useMemo, useState } from "react";
-import { StyleSheet, View } from "react-native";
+import { View } from "react-native";
 import { ProductRestRepository } from "../../infrastructure/repository/ProductRestRepository";
 import { ProductService } from "../../domain/services/ProductListService";
 import Product from "../../domain/entities/Product";
@@ -13,6 +13,7 @@ import { useDeepLink, OpenProductIntent } from "../../infrastructure/hook/useDee
 import ProductList from "../component/ProductList";
 
 import { NativeModules } from 'react-native';
+import { styles } from "./Home.styles";
 
 
 export const HomePage = () => {
@@ -143,21 +144,3 @@ export const HomePage = () => {
         </SafeAreaProvider>
     )
 };
-
-const styles = StyleSheet.create({
-    container: {
-        flex: 1,
-    },
-    controlsContainer: {
-        flexDirection: 'row',
-        justifyContent: 'space-between',
-        alignItems: 'center',
-        paddingHorizontal: 10, // Add horizontal padding to the main container
-        borderBottomWidth: 1,
-        borderBottomColor: '#eee',
-    },
-    sortButtonContainer: { // This will now just group the sort buttons
-        flexDirection: 'row',
-        justifyContent: 'center',
-    },
-});

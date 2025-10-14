@@ -1,27 +1,12 @@
 import React from "react";
-import { View, Image, Text, StyleSheet, TouchableOpacity } from "react-native";
+import { View, Image, Text, TouchableOpacity } from "react-native";
 import Product from "../../domain/entities/Product";
+import { styles } from "./productThumb.styles";
 
 interface ProductThumbProps {
     product: Product;
     onPress: () => void;
 }
-
-const styles = StyleSheet.create({
-    container: {
-        display: "flex",
-        flexDirection: "row",
-        backgroundColor: "blue",
-        alignItems: "center",
-        marginBottom: 10,
-        height: 150
-    },
-    thumbnail: {
-        height: 100,
-        width: 100,
-        resizeMode: "contain"
-    },
-})
 
 const ProductThumb = ({ product, onPress }: ProductThumbProps) => {
     return <TouchableOpacity onPress={onPress}>
