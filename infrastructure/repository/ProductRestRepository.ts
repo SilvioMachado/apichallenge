@@ -36,6 +36,20 @@ export class ProductRestRepository implements ProductRepository {
         this.resetState();
     }
 
+    private toProduct(p: any): Product {
+        return new Product(
+            p.id,
+            p.title,
+            p.description,
+            p.category,
+            p.price,
+            p.thumbnail,
+            p.rating,
+            p.images,
+            p.stock
+        );
+    }
+
     private async fetchPage(): Promise<ProductResponse> {
         let url = "https://dummyjson.com/products";
         if (this.filter !== null) {
@@ -59,7 +73,7 @@ export class ProductRestRepository implements ProductRepository {
         this.currentPage += 1;
         const response = await this.fetchPage();
         this.totalProducts = response.total;
-        return response.products;
+        return response.products.map(p => this.toProduct(p));
     }
 
     async getPreviousPage(): Promise<Product[]> {
@@ -67,14 +81,14 @@ export class ProductRestRepository implements ProductRepository {
         this.currentPage -= 1;
         const response = await this.fetchPage();
         this.totalProducts = response.total;
-        return response.products;
+        return response.products.map(p => this.toProduct(p));
     }
 
     async getById(id: number): Promise<Product> {
         let url = `https://dummyjson.com/products/${id}`;
         const res = await fetch(url);
-        const json: Product = await res.json();
-        return json
+        const json = await res.json();
+        return this.toProduct(json);
     }
 
     hasNext(): boolean {

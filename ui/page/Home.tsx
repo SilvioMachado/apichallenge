@@ -41,7 +41,7 @@ export const HomePage = () => {
 
         CalendarModule.createEvent(
             `Buy ${product.title}`,
-            `Buy now: http://apichallenge.com/product/${product.id}`,
+            `Buy now: ${product.getBuyURL()}`,
             new Date(2025, 10, 15, 10, 30).getTime(),
         )
     };
