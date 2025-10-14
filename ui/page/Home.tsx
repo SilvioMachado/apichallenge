@@ -1,7 +1,7 @@
 import React, { useEffect, useMemo, useState } from "react";
-import { FlatList, ActivityIndicator, StyleSheet, View, Button, TouchableOpacity, Text } from "react-native";
+import { FlatList, ActivityIndicator, StyleSheet, View, Button, TouchableOpacity, Text, Linking } from "react-native";
 import ProductThumb from "../component/productThumb";
-import { ProductRestRepository } from "../../infrastructure/ProductRestRepository";
+import { ProductRestRepository } from "../../infrastructure/repository/ProductRestRepository";
 import { ProductService } from "../../domain/services/ProductListService";
 import Product from "../../domain/entities/Product";
 import { SafeAreaProvider, SafeAreaView } from "react-native-safe-area-context";
@@ -10,6 +10,7 @@ import SortButton from "../component/SortButton";
 import { DetailsPage } from "../component/Details";
 import { SortOrder } from "../../domain/entities/SortOrder";
 import { SortBy } from "../../domain/entities/SortBy";
+import { useDeepLink, OpenProductIntent } from "../../infrastructure/hook/useDeepLink";
 
 export const HomePage = () => {
     const [products, setProducts] = useState<Product[]>([]);
@@ -22,9 +23,23 @@ export const HomePage = () => {
     const [sortBy, setSortBy] = useState<SortBy | null>(SortBy.PRICE); // Default sort by price
     const [sortOrder, setSortOrder] = useState<SortOrder>(SortOrder.ASC); // Default ascending
 
+    const { intent, clearIntent } = useDeepLink();
+
     const productService = useMemo(
         () => new ProductService(new ProductRestRepository(10))
     , []);
+
+    useEffect(() => {
+        if (intent && 'productId' in intent) {
+            console.log("INTENT PRODUCT ", intent, true);
+            productService
+                .getProductById(intent.productId)
+                .then(( product: Product ) => {
+                    setSelectedProduct(product);
+                });
+            clearIntent(); // Clear the intent after handling it.
+        }
+    }, [intent, productService, clearIntent]);
 
     useEffect(() => {
         const fetchData = async () => {

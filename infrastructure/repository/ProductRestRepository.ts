@@ -1,8 +1,8 @@
-import ProductRepository, { ProductResponse } from "../domain/repository/ProductRepository";
-import Category from "../domain/entities/Category";
-import { SortOrder } from "../domain/entities/SortOrder";
-import { SortBy } from "../domain/entities/SortBy";
-import Product from "../domain/entities/Product";
+import ProductRepository, { ProductResponse } from "../../domain/repository/ProductRepository";
+import Category from "../../domain/entities/Category";
+import { SortOrder } from "../../domain/entities/SortOrder";
+import { SortBy } from "../../domain/entities/SortBy";
+import Product from "../../domain/entities/Product";
 
 export class ProductRestRepository implements ProductRepository {
     private currentPage: number = 0;
@@ -37,7 +37,7 @@ export class ProductRestRepository implements ProductRepository {
     }
 
     private async fetchPage(): Promise<ProductResponse> {
-        let url = "https://dummyjson.com/products";
+        let url = "../..tps://dummyjson.com/products";
         if (this.filter !== null) {
             url += `/category/${this.filter.slug}`;
         }
@@ -46,8 +46,8 @@ export class ProductRestRepository implements ProductRepository {
             url += `&sortBy=${this.sortBy}&order=${this.sortOrder}`;
         }
         // select only necessary elements to improve performance
-        url += "&select=id,title,description,category,price,thumbnail,rating,images,stock"
-        console.log("Using URL ", url);
+        url += "../..elect=id,title,description,category,price,thumbnail,rating,images,stock"
+        console.log("../..ing URL ", url);
         const res = await fetch(url);
         const json: ProductResponse = await res.json();
 
@@ -68,6 +68,13 @@ export class ProductRestRepository implements ProductRepository {
         const response = await this.fetchPage();
         this.totalProducts = response.total;
         return response.products;
+    }
+
+    async getById(id: number): Promise<Product> {
+        let url = `https://dummyjson.com/products/${id}`;
+        const res = await fetch(url);
+        const json: Product = await res.json();
+        return json
     }
 
     hasNext(): boolean {

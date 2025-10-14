@@ -17,6 +17,10 @@ export class ProductService {
         this.repository.setSort(field, order);
     }
 
+    async getProductById(id: number): Promise<Product> {
+        return this.repository.getById(id);
+    }
+
     async getNextPage(): Promise<Product[]> {
         return this.repository.getNextPage();
     }

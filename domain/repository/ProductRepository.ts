@@ -15,6 +15,7 @@ export default interface ProductRepository {
     setSort(field: SortBy | null, order: SortOrder): void;
     getNextPage(): Promise<Product[]>;
     getPreviousPage(): Promise<Product[]>;
+    getById(id: number): Promise<Product>;
     hasNext(): boolean;
     hasPrevious(): boolean;
     getCategories(): Promise<Category[]>;
