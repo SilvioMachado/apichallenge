@@ -30,14 +30,16 @@ export const HomePage = () => {
     , []);
 
     useEffect(() => {
-        if (intent && 'productId' in intent) {
-            console.log("INTENT PRODUCT ", intent, true);
-            productService
-                .getProductById(intent.productId)
-                .then(( product: Product ) => {
-                    setSelectedProduct(product);
-                });
-            clearIntent(); // Clear the intent after handling it.
+        if (intent instanceof OpenProductIntent) {
+            const productId = intent.getProductId();
+            if (productId) {
+                productService
+                    .getProductById(productId)
+                    .then(( product: Product ) => {
+                        setSelectedProduct(product);
+                    });
+                    clearIntent(); // Clear the intent after handling it.
+            }
         }
     }, [intent, productService, clearIntent]);
 

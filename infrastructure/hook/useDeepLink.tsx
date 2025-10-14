@@ -2,9 +2,9 @@ import { useState, useEffect } from 'react';
 import { Linking } from 'react-native';
 
 export interface AppIntent {};
-    // export type OpenProductIntent = AppIntent & {
-    //     productId: number;
-    // } 
+// export type OpenProductIntent = AppIntent & {
+//     productId: number;
+// } 
 
 export class OpenProductIntent implements AppIntent {
     url: string;
@@ -14,13 +14,15 @@ export class OpenProductIntent implements AppIntent {
     }
 
     getProductId(): number | undefined {
-        const match = this.url.match(/product\/(\d+)/);
-        if (match && match[1]) {
-            const productId = parseInt(match[1], 10);
-            if (!isNaN(productId)) {
-                return productId;
-            }
-        }
+        //   const match = this.url.match(/product\/(\d+)/);
+        //   if (match && match[1]) {
+        //       const productId = parseInt(match[1], 10);
+        //       if (!isNaN(productId)) {
+        //           return productId;
+        //       }
+        // }
+        const parts = this.url.split('/');
+        return Number(parts[parts.length - 1]);
     }
 }
 
@@ -38,9 +40,8 @@ export const useDeepLink = () => {
     console.log("Received URL:", url);
 
     // Expected URL format: apichallenge://product/1
-    
-    } else {
-        console.error("Invalid URL format for Deep Linking");
+    if (url.startsWith('apichallenge://product')) {
+      setIntent(new OpenProductIntent(url));
     }
   };
 
