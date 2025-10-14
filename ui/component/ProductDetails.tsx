@@ -2,15 +2,15 @@ import React, { useRef, useState } from 'react';
 import { Text, View, Image, Button, Modal, FlatList, ViewToken, ScrollView } from "react-native";
 import Product from '../../domain/entities/Product';
 import { SafeAreaView } from 'react-native-safe-area-context';
-import { styles } from './Details.styles';
+import { styles } from './ProductDetails.styles';
 
-interface DetailsPageProps {
+interface ProductDetailsPageProps {
     product: Product | null;
     onClose: () => void;
     setReminder: () => void;
 }
 
-export const DetailsPage = ({ product, onClose, setReminder }: DetailsPageProps) => {
+export const ProductDetailsPage = ({ product, onClose, setReminder }: ProductDetailsPageProps) => {
     const [activeIndex, setActiveIndex] = useState(0);
 
     const onViewableItemsChanged = useRef(({ viewableItems }: { viewableItems: Array<ViewToken> }) => {

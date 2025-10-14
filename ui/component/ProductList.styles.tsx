@@ -25,4 +25,11 @@ export const styles = StyleSheet.create({
         fontWeight: '600',
         color: '#333',
     },
+    errorText: {
+        color: 'red',
+        fontSize: 16,
+        marginBottom: 20,
+        textAlign: 'center',
+        paddingHorizontal: 20,
+    },
 });

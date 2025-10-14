@@ -5,7 +5,7 @@ import Product from "../../domain/entities/Product";
 import { SafeAreaProvider, SafeAreaView } from "react-native-safe-area-context";
 import Filter, { Category } from "../component/Filter";
 import SortButton from "../component/SortButton";
-import { DetailsPage } from "../component/Details";
+import { ProductDetailsPage } from "../component/ProductDetails";
 import { SortOrder } from "../../domain/entities/SortOrder";
 import { SortBy } from "../../domain/entities/SortBy";
 import { useDeepLink, OpenProductIntent } from "../../infrastructure/hook/useDeepLink";
@@ -13,19 +13,15 @@ import ProductList from "../component/ProductList";
 
 import { NativeModules } from 'react-native';
 import { styles } from "./Home.styles";
+import { FailedToFetchError } from "../../domain/exception/FailedToFetchError";
 import { ProductRestRepository } from "../../infrastructure/repository/ProductRestRepository";
 
 
 export const HomePage = () => {
-    const [products, setProducts] = useState<Product[]>([]);
-    const [categories, setCategories] = useState<Category[]>([]);
-    const [loading, setLoading] = useState<boolean>(true);
     const [selectedProduct, setSelectedProduct] = useState<Product | null>(null);
-    const [hasNextPage, setHasNextPage] = useState(true);
-    const [hasPreviousPage, setHasPreviousPage] = useState(false);
     const [sortBy, setSortBy] = useState<SortBy | null>(SortBy.PRICE);
-    const [productDisplayRange, setProductDisplayRange] = useState<string>("");
     const [sortOrder, setSortOrder] = useState<SortOrder>(SortOrder.ASC); // Default ascending
+    const [filter, setFilter] = useState<Category | null>(null);
 
     const { intent, clearIntent } = useDeepLink();
 
@@ -61,87 +57,38 @@ export const HomePage = () => {
         }
     }, [intent, productService, clearIntent]);
 
-    useEffect(() => {
-        const fetchData = async () => {
-            setLoading(true);
-            try {
-                // Set initial sort parameters in the service before fetching
-                productService.setSort(sortBy, sortOrder); // Assuming setSort exists and resets page
-                const [productsResponse, categoriesResponse] = await Promise.all([
-                    productService.getNextPage(),
-                    productService.getCategories(),
-                ]);
-                setProducts(productsResponse);
-                setCategories(categoriesResponse);
-                setHasNextPage(productService.hasNext());
-                setHasPreviousPage(productService.hasPrevious());
-
-                setProductDisplayRange(productService.getProductDisplayRange());
-            } catch (error) {
-                console.error("Failed to fetch data:", error);
-            }
-            setLoading(false);
-        };
-        fetchData();
-    }, []);
-
-    const fetchProducts = async (fetcher: () => Promise<Product[]>) => {
-        setLoading(true);
-        try {
-            const res = await fetcher();
-            setProducts(res);
-            setHasNextPage(productService.hasNext());
-            setHasPreviousPage(productService.hasPrevious());
-
-            setProductDisplayRange(productService.getProductDisplayRange());
-        } catch (error) {
-            console.error("Failed to fetch products:", error);
-        }
-        setLoading(false);
-    };
-
-    const goToNextPage = () => {
-        fetchProducts(() => productService.getNextPage());
-    };
-
-    const goToPreviousPage = () => {
-        fetchProducts(() => productService.getPreviousPage());
-    }
-
     const handleFilterSelect = (category: Category | null) => {
-        console.log("Selected category slug:", category);
-        productService.setFilter(category);
-        goToNextPage();
+        setFilter(category);
     };
 
     const handleSortChange = (field: SortBy, order: SortOrder) => {
         setSortBy(field);
         setSortOrder(order);
-        productService.setSort(field, order);
-        goToNextPage();
     };
+
+    // Make sure sorting does not change just because we opened and closed the Product Details component.
+    const sort = useMemo(() => ({
+        field: sortBy,
+        order: sortOrder,
+    }), [sortBy, sortOrder]);
 
     return (
         <SafeAreaProvider>
             <SafeAreaView style={styles.container}>
                 <View style={styles.controlsContainer}>
-                    <Filter categories={categories} onCategorySelect={handleFilterSelect} />
+                    <Filter onCategorySelect={handleFilterSelect} fetchCategories={() => productService.getCategories()}/>
                     <View style={styles.sortButtonContainer}>
                         <SortButton label="Price" field={SortBy.PRICE} currentSortField={sortBy} currentSortOrder={sortOrder} onPress={handleSortChange} />
                         <SortButton label="Rating" field={SortBy.RATING} currentSortField={sortBy} currentSortOrder={sortOrder} onPress={handleSortChange} />
                     </View>
                 </View>
                 <ProductList
-                    products={products}
+                    productService={productService}
                     onProductPress={setSelectedProduct}
-                    loading={loading}
-                    goToNextPage={goToNextPage}
-                    goToPreviousPage={goToPreviousPage}
-                    hasNextPage={hasNextPage}
-                    hasPreviousPage={hasPreviousPage}
-                    productDisplayRange={productDisplayRange}
+                    filter={filter}
+                    sort={sort}
                 />
-                <DetailsPage 
+                <ProductDetailsPage 
                     product={selectedProduct} 
                     onClose={() => setSelectedProduct(null)}
                     setReminder={() => setReminder(selectedProduct)}

@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import { Text, View, Button, Modal, FlatList, TouchableOpacity } from "react-native";
 import { styles } from "./Filter.styles";
 
@@ -8,13 +8,24 @@ export interface Category {
 }
 
 interface FilterProps {
-    categories: Category[];
     onCategorySelect: (category: Category | null) => void;
+    fetchCategories: () => Promise<Category[]>;
 }
 
-const Filter = ({ categories, onCategorySelect }: FilterProps) => {
+const Filter = ({ onCategorySelect, fetchCategories }: FilterProps) => {
     const [modalVisible, setModalVisible] = useState(false);
     const [selectedCategory, setSelectedCategory] = useState<Category | null>(null);
+    const [categories, setCategories] = useState<Category[]>([]);
+
+    useEffect(() => {
+        fetchCategories()
+            .then((data) => {
+                setCategories(data);
+            })
+            .catch((error) => {
+                console.error("Error fetching categories:", error);
+            })
+    }, []);
 
     const handleCategoryPress = (category: Category) => {
         setSelectedCategory(category);

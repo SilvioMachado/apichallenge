@@ -3,6 +3,7 @@ import Product from "../entities/Product";
 import Category from "../entities/Category";
 import { SortOrder } from "../entities/SortOrder";
 import { SortBy } from "../entities/SortBy";
+import { FailedToFetchError } from "../exception/FailedToFetchError";
 
 export class ProductService {
     constructor(
@@ -18,15 +19,27 @@ export class ProductService {
     }
 
     async getProductById(id: number): Promise<Product> {
-        return this.repository.getById(id);
+        try {
+            return await this.repository.getById(id);
+        } catch (e) {
+            throw new FailedToFetchError(`Failed to fetch product with id ${id}.`);
+        }
     }
 
     async getNextPage(): Promise<Product[]> {
-        return this.repository.getNextPage();
+        try {
+            return await this.repository.getNextPage();
+        } catch (e) {
+            throw new FailedToFetchError("Failed to fetch next page of products.");
+        }
     }
 
     async getPreviousPage(): Promise<Product[]> {
-        return this.repository.getPreviousPage();
+        try {
+            return await this.repository.getPreviousPage();
+        } catch (e) {
+            throw new FailedToFetchError("Failed to fetch previous page of products.");
+        }
     }
 
     hasNext(): boolean {
@@ -38,7 +51,11 @@ export class ProductService {
     }
 
     async getCategories(): Promise<Category[]> {
-        return this.repository.getCategories();
+        try {
+            return await this.repository.getCategories();
+        } catch (e) {
+            throw new FailedToFetchError("Failed to fetch product categories.");
+        }
     }
 
     getCurrentPage(): number {

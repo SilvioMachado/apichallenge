@@ -49,6 +49,7 @@ export const styles = StyleSheet.create({
     },
     categoryItemContainer: {
         width: '100%',
+        marginBottom: 10,
     },
     categoryItem: {
         fontSize: 18,

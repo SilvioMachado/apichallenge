@@ -50,12 +50,15 @@ export class ProductRestRepository implements ProductRepository {
         );
     }
 
-    private async fetchPage(): Promise<ProductResponse> {
+    private async fetchPage(
+        limit: number,
+        skip: number,
+    ): Promise<ProductResponse> {
         let url = "https://dummyjson.com/products";
         if (this.filter !== null) {
             url += `/category/${this.filter.slug}`;
         }
-        url += `?limit=${this.pageLimit}&skip=${this.skip}`;
+        url += `?limit=${limit}&skip=${skip}`;
         if (this.sortBy) {
             url += `&sortBy=${this.sortBy}&order=${this.sortOrder}`;
         }
@@ -69,19 +72,31 @@ export class ProductRestRepository implements ProductRepository {
     }
 
     async getNextPage(): Promise<Product[]> {
-        this.skip += this.pageLimit;
-        this.currentPage += 1;
-        const response = await this.fetchPage();
+        const skip = this.skip + this.pageLimit;
+        const currentPage = this.currentPage + 1;
+
+        const response = await this.fetchPage(this.pageLimit, skip);
+        const products = response.products.map(p => this.toProduct(p));
+
+        this.skip = skip;
+        this.currentPage = currentPage;
         this.totalProducts = response.total;
-        return response.products.map(p => this.toProduct(p));
+
+        return products;
     }
 
     async getPreviousPage(): Promise<Product[]> {
-        this.skip -= this.pageLimit;
-        this.currentPage -= 1;
-        const response = await this.fetchPage();
+        const skip = this.skip - this.pageLimit;
+        const currentPage = this.currentPage - 1;
+
+        const response = await this.fetchPage(this.pageLimit, skip);
+        const products = response.products.map(p => this.toProduct(p));
+
+        this.skip = skip;
+        this.currentPage = currentPage;
         this.totalProducts = response.total;
-        return response.products.map(p => this.toProduct(p));
+
+        return products;
     }
 
     async getById(id: number): Promise<Product> {
