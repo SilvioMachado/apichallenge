@@ -1,99 +1,122 @@
-import React, { useEffect, useMemo, useState } from "react";
-import { View } from "react-native";
-import { ProductService } from "../../domain/services/ProductListService";
-import Product from "../../domain/entities/Product";
-import { SafeAreaProvider, SafeAreaView } from "react-native-safe-area-context";
-import Filter, { Category } from "../component/Filter";
-import SortButton from "../component/SortButton";
-import { ProductDetailsPage } from "../component/ProductDetails";
-import { SortOrder } from "../../domain/entities/SortOrder";
-import { SortBy } from "../../domain/entities/SortBy";
-import { useDeepLink, OpenProductIntent } from "../../infrastructure/hook/useDeepLink";
-import ProductList from "../component/ProductList";
+import React, { useEffect, useMemo, useState } from 'react';
+import { View } from 'react-native';
+import { ProductService } from '../../domain/services/ProductListService';
+import Product from '../../domain/entities/Product';
+import { SafeAreaProvider, SafeAreaView } from 'react-native-safe-area-context';
+import Filter, { Category } from '../component/Filter';
+import SortButton from '../component/SortButton';
+import { ProductDetailsPage } from '../component/ProductDetails';
+import { SortOrder } from '../../domain/entities/SortOrder';
+import { SortBy } from '../../domain/entities/SortBy';
+import {
+  useDeepLink,
+  OpenProductIntent,
+} from '../../infrastructure/hook/useDeepLink';
+import ProductList from '../component/ProductList';
 
 import { NativeModules } from 'react-native';
-import { styles } from "./Home.styles";
-import { FailedToFetchError } from "../../domain/exception/FailedToFetchError";
-import { ProductRestRepository } from "../../infrastructure/repository/ProductRestRepository";
-
+import { styles } from './Home.styles';
+import { ProductRestRepository } from '../../infrastructure/repository/ProductRestRepository';
 
 export const HomePage = () => {
-    const [selectedProduct, setSelectedProduct] = useState<Product | null>(null);
-    const [sortBy, setSortBy] = useState<SortBy | null>(SortBy.PRICE);
-    const [sortOrder, setSortOrder] = useState<SortOrder>(SortOrder.ASC); // Default ascending
-    const [filter, setFilter] = useState<Category | null>(null);
+  const [selectedProduct, setSelectedProduct] = useState<Product | null>(null);
+  const [sortBy, setSortBy] = useState<SortBy | null>(SortBy.PRICE);
+  const [sortOrder, setSortOrder] = useState<SortOrder>(SortOrder.ASC); // Default ascending
+  const [filter, setFilter] = useState<Category | null>(null);
 
-    const { intent, clearIntent } = useDeepLink();
+  const { intent, clearIntent } = useDeepLink();
 
-    const { CalendarModule } = NativeModules;
+  const { CalendarModule } = NativeModules;
 
-    const productService = useMemo(
-        () => new ProductService(new ProductRestRepository(10))
-    , []);
+  const productService = useMemo(
+    () => new ProductService(new ProductRestRepository(10)),
+    [],
+  );
 
-    const setReminder = (product: Product | null) => {
-        if (!product) {
-            return;
-        }
+  const setReminder = (product: Product | null) => {
+    if (!product) {
+      return;
+    }
 
-        CalendarModule.createEvent(
-            `Buy ${product.title}`,
-            `Buy now: ${product.getBuyURL()}`,
-            new Date(2025, 10, 15, 10, 30).getTime(),
-        )
-    };
+    CalendarModule.createEvent(
+      `Buy ${product.title}`,
+      `Buy now: ${product.getBuyURL()}`,
+      new Date(2025, 10, 15, 10, 30).getTime(),
+    );
+  };
 
-    useEffect(() => {
-        if (intent instanceof OpenProductIntent) {
-            const productId = intent.getProductId();
-            if (productId) {
-                productService
-                    .getProductById(productId)
-                    .then(( product: Product ) => {
-                        setSelectedProduct(product);
-                    });
-                    clearIntent(); // Clear the intent after handling it.
-            }
-        }
-    }, [intent, productService, clearIntent]);
+  useEffect(() => {
+    if (intent instanceof OpenProductIntent) {
+      const productId = intent.getProductId();
+      if (productId) {
+        productService.getProductById(productId).then((product: Product) => {
+          setSelectedProduct(product);
+        });
+        clearIntent(); // Clear the intent after handling it.
+      }
+    }
+  }, [intent, productService, clearIntent]);
 
-    const handleFilterSelect = (category: Category | null) => {
-        setFilter(category);
-    };
+  const handleFilterSelect = (category: Category | null) => {
+    setFilter(category);
+  };
 
-    const handleSortChange = (field: SortBy, order: SortOrder) => {
-        setSortBy(field);
-        setSortOrder(order);
-    };
+  const handleSortChange = (field: SortBy, order: SortOrder) => {
+    setSortBy(field);
+    setSortOrder(order);
+  };
 
-    // Make sure sorting does not change just because we opened and closed the Product Details component.
-    const sort = useMemo(() => ({
-        field: sortBy,
-        order: sortOrder,
-    }), [sortBy, sortOrder]);
+  // Make sure sorting does not change just because we opened and closed the Product Details component.
+  const sort = useMemo(
+    () => ({
+      field: sortBy,
+      order: sortOrder,
+    }),
+    [sortBy, sortOrder],
+  );
 
-    return (
-        <SafeAreaProvider>
-            <SafeAreaView style={styles.container}>
-                <View style={styles.controlsContainer}>
-                    <Filter onCategorySelect={handleFilterSelect} fetchCategories={() => productService.getCategories()}/>
-                    <View style={styles.sortButtonContainer}>
-                        <SortButton label="Price" field={SortBy.PRICE} currentSortField={sortBy} currentSortOrder={sortOrder} onPress={handleSortChange} />
-                        <SortButton label="Rating" field={SortBy.RATING} currentSortField={sortBy} currentSortOrder={sortOrder} onPress={handleSortChange} />
-                    </View>
-                </View>
-                <ProductList
-                    productService={productService}
-                    onProductPress={setSelectedProduct}
-                    filter={filter}
-                    sort={sort}
-                />
-                <ProductDetailsPage 
-                    product={selectedProduct} 
-                    onClose={() => setSelectedProduct(null)}
-                    setReminder={() => setReminder(selectedProduct)}
-                 />
-            </SafeAreaView>
-        </SafeAreaProvider>
-    )
+  return (
+    <SafeAreaProvider>
+      <SafeAreaView style={styles.container}>
+        {/* Sorting and Filtering */}
+        <View style={styles.controlsContainer}>
+          <Filter
+            onCategorySelect={handleFilterSelect}
+            fetchCategories={() => productService.getCategories()}
+          />
+          <View style={styles.sortButtonContainer}>
+            <SortButton
+              label="Price"
+              field={SortBy.PRICE}
+              currentSortField={sortBy}
+              currentSortOrder={sortOrder}
+              onPress={handleSortChange}
+            />
+            <SortButton
+              label="Rating"
+              field={SortBy.RATING}
+              currentSortField={sortBy}
+              currentSortOrder={sortOrder}
+              onPress={handleSortChange}
+            />
+          </View>
+        </View>
+
+        {/* Product List */}
+        <ProductList
+          productService={productService}
+          onProductPress={setSelectedProduct}
+          filter={filter}
+          sort={sort}
+        />
+
+        {/* Selected Product Details */}
+        <ProductDetailsPage
+          product={selectedProduct}
+          onClose={() => setSelectedProduct(null)}
+          setReminder={() => setReminder(selectedProduct)}
+        />
+      </SafeAreaView>
+    </SafeAreaProvider>
+  );
 };

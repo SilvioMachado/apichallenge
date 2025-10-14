@@ -1,6 +1,6 @@
 interface Category {
-    slug: string;
-    name: string;
+  slug: string;
+  name: string;
 }
 
 export default Category;

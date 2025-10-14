@@ -1,29 +1,29 @@
 import { useState, useEffect } from 'react';
 import { Linking } from 'react-native';
 
-export interface AppIntent {};
+export interface AppIntent {}
 // export type OpenProductIntent = AppIntent & {
 //     productId: number;
-// } 
+// }
 
 export class OpenProductIntent implements AppIntent {
-    url: string;
+  url: string;
 
-    constructor(url: string) {
-        this.url = url;
-    }
+  constructor(url: string) {
+    this.url = url;
+  }
 
-    getProductId(): number | undefined {
-        //   const match = this.url.match(/product\/(\d+)/);
-        //   if (match && match[1]) {
-        //       const productId = parseInt(match[1], 10);
-        //       if (!isNaN(productId)) {
-        //           return productId;
-        //       }
-        // }
-        const parts = this.url.split('/');
-        return Number(parts[parts.length - 1]);
-    }
+  getProductId(): number | undefined {
+    //   const match = this.url.match(/product\/(\d+)/);
+    //   if (match && match[1]) {
+    //       const productId = parseInt(match[1], 10);
+    //       if (!isNaN(productId)) {
+    //           return productId;
+    //       }
+    // }
+    const parts = this.url.split('/');
+    return Number(parts[parts.length - 1]);
+  }
 }
 
 export const useDeepLink = () => {
@@ -37,7 +37,7 @@ export const useDeepLink = () => {
     if (!url) {
       return;
     }
-    console.log("Received URL:", url);
+    console.log('Received URL:', url);
 
     // Expected URL format: apichallenge://product/1
     if (url.startsWith('apichallenge://product')) {
@@ -55,7 +55,9 @@ export const useDeepLink = () => {
     getUrlAsync();
 
     // Register callback if a URL is used while the app is opened.
-    const subscription = Linking.addEventListener('url', ({ url }) => handleUrl(url));
+    const subscription = Linking.addEventListener('url', ({ url }) =>
+      handleUrl(url),
+    );
 
     return () => subscription.remove();
   }, []);
