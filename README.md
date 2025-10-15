@@ -69,7 +69,7 @@ adb shell am start \
 
 The only existing deep link Intent implemented in the App is the `OpenProductIntent`, that opens the app details from the custom URL.
 
-## React Architecture
+# React Architecture
 
 This project follows a Clean Architecture approach, separating concerns into three main layers: UI, Domain, and Infrastructure.
 
@@ -95,8 +95,23 @@ This separation helps to create a scalable and maintainable codebase where busin
 
 Since we're only coding for Android for this demo project, we took some liberties like `AndroidCalendarProvider` being defined on infra layer, and being directly imported on the UI.
 
-## App Pages
+# App Pages
 
 This app has only one page. I valued simplicity and instead of needing to add Routing and several other libraries, we open Product details as a modal on top of the home page.
 
 The pages (in this App, only the Home page) should handle orchestrating UI components and instantiating domain services. 
+
+# Error handling
+
+We have 4 main possible sources of error:
+
+1. Product List API
+2. Product Detail API
+3. Calendar API
+4. Category API
+
+For brevity, the Product List component displays how I'd handle errors given the asks for the challenge.
+
+1. Infrastructure layer throws errors related to the API calls
+2. Domain layer transforms into a domain error
+3. The UI/Presentation layer is responsible for rendering any necessary information and letting the user re-do the last action they took.
