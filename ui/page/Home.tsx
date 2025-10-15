@@ -27,7 +27,6 @@ export const HomePage = () => {
 
   const { intent, clearIntent } = useDeepLink();
 
-
   const productService = useMemo(
     () => new ProductService(new ProductRestRepository(10)),
     [],
@@ -36,7 +35,7 @@ export const HomePage = () => {
   const notificationService = useMemo(
     () => new NotificationService(new AndroidCalendarProvider()),
     [],
-  )
+  );
 
   const setReminder = (product: Product | null, date: Date) => {
     if (!product) {

@@ -9,11 +9,10 @@ import {
   ViewToken,
   ScrollView,
 } from 'react-native';
-import { DateTimePickerAndroid } from '@react-native-community/datetimepicker';
-import type { DateTimePickerEvent } from '@react-native-community/datetimepicker';
 import Product from '../../domain/entities/Product';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { styles } from './ProductDetails.styles';
+import { CrossPlatformDateTimePicker } from './CrossPlatformDateTimePicker';
 
 interface ProductDetailsPageProps {
   product: Product | null;
@@ -27,6 +26,7 @@ export const ProductDetails = ({
   setReminder,
 }: ProductDetailsPageProps) => {
   const [activeIndex, setActiveIndex] = useState(0);
+  const [isDatePickerVisible, setDatePickerVisible] = useState(false);
 
   const onViewableItemsChanged = useRef(
     ({ viewableItems }: { viewableItems: Array<ViewToken> }) => {
@@ -44,19 +44,9 @@ export const ProductDetails = ({
     </View>
   );
 
-  const showDatePicker = () => {
-    DateTimePickerAndroid.open({
-      value: new Date(),
-      onChange: (
-        event: DateTimePickerEvent,
-        selectedDate: Date | undefined,
-      ) => {
-        if (event.type === 'set' && selectedDate) {
-          setReminder(selectedDate);
-        }
-      },
-      mode: 'date',
-    });
+  const handleDateSelected = (selectedDate: Date) => {
+    setDatePickerVisible(false);
+    setReminder(selectedDate);
   };
   return (
     <Modal
@@ -111,12 +101,20 @@ export const ProductDetails = ({
               </View>
             </ScrollView>
             <View style={styles.footer}>
-              <Button title="Remind me" onPress={showDatePicker} />
+              <Button
+                title="Remind me"
+                onPress={() => setDatePickerVisible(true)}
+              />
               <View style={styles.buttonSeparator} />
               <Button title="Close" onPress={onClose} />
             </View>
           </>
         )}
+        <CrossPlatformDateTimePicker
+          isVisible={isDatePickerVisible}
+          onClose={() => setDatePickerVisible(false)}
+          onDateSelected={handleDateSelected}
+        />
       </SafeAreaView>
     </Modal>
   );
