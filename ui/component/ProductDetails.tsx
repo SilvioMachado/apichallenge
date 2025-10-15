@@ -9,6 +9,8 @@ import {
   ViewToken,
   ScrollView,
 } from 'react-native';
+import { DateTimePickerAndroid } from '@react-native-community/datetimepicker';
+import type { DateTimePickerEvent } from '@react-native-community/datetimepicker';
 import Product from '../../domain/entities/Product';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { styles } from './ProductDetails.styles';
@@ -16,7 +18,7 @@ import { styles } from './ProductDetails.styles';
 interface ProductDetailsPageProps {
   product: Product | null;
   onClose: () => void;
-  setReminder: () => void;
+  setReminder: (date: Date) => void;
 }
 
 export const ProductDetails = ({
@@ -42,6 +44,20 @@ export const ProductDetails = ({
     </View>
   );
 
+  const showDatePicker = () => {
+    DateTimePickerAndroid.open({
+      value: new Date(),
+      onChange: (
+        event: DateTimePickerEvent,
+        selectedDate: Date | undefined,
+      ) => {
+        if (event.type === 'set' && selectedDate) {
+          setReminder(selectedDate);
+        }
+      },
+      mode: 'date',
+    });
+  };
   return (
     <Modal
       animationType="slide"
@@ -95,7 +111,7 @@ export const ProductDetails = ({
               </View>
             </ScrollView>
             <View style={styles.footer}>
-              <Button title="Remind me" onPress={setReminder} />
+              <Button title="Remind me" onPress={showDatePicker} />
               <View style={styles.buttonSeparator} />
               <Button title="Close" onPress={onClose} />
             </View>

@@ -18,6 +18,8 @@ export class NotificationService {
         this.calendarProvider.createEvent({
             title: `Reminder to buy ${product.title}`,
             description: `Buy now: ${product.getBuyURL()}`,
+            // There's no point in setting an end, so for this demo
+            // We only set one datetime.
             start: at,
             end: at,
         });

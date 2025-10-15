@@ -38,12 +38,12 @@ export const HomePage = () => {
     [],
   )
 
-  const setReminder = (product: Product | null) => {
+  const setReminder = (product: Product | null, date: Date) => {
     if (!product) {
       return;
     }
 
-    notificationService.createBuyReminder(new Date(2025, 14, 10), product);
+    notificationService.createBuyReminder(date, product);
   };
 
   useEffect(() => {
@@ -115,7 +115,7 @@ export const HomePage = () => {
         <ProductDetails
           product={selectedProduct}
           onClose={() => setSelectedProduct(null)}
-          setReminder={() => setReminder(selectedProduct)}
+          setReminder={(date: Date) => setReminder(selectedProduct, date)}
         />
       </SafeAreaView>
     </SafeAreaProvider>
